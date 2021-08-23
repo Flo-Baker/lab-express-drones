@@ -24,7 +24,8 @@ router.get("/drones/create-form", (req, res, next) => {
 
 router.post("/drones/create-form", (req, res, next) => {
   // Iteration #3: Add a new drone
-  Drone.create()
+  const { name, propellers, maxSpeed } = req.body;
+  Drone.create({name, propellers, maxSpeed})
     .then((drones) => {
       console.log("Here is the new drone you have created.", drones);
       res.redirect("/drones");
@@ -34,19 +35,43 @@ router.post("/drones/create-form", (req, res, next) => {
     });
 });
 
-router.get("/drones/:id/edit", (req, res, next) => {
+router.get("/drones/:id/update-form", (req, res, next) => {
   // Iteration #4: Update the drone
-  // ... your code here
+  const { id } = req.params;
+  Drone.findById(id)
+  .then((drones) => {
+    console.log("Here is your updated drone", drones);
+    res.render("drones/update-form", {drones});
+  })
+  .catch((err) => {
+    console.log("An error has occured while updating a drone.");
+  });
 });
 
-router.post("/drones/:id/edit", (req, res, next) => {
+router.post("/drones/:id/update-form", (req, res, next) => {
   // Iteration #4: Update the drone
-  // ... your code here
+  const { id } = req.params;
+  const { name, propellers, maxSpeed } = req.body;
+  Drone.findByIdAndUpdate(id, {name, propellers, maxSpeed}, {new: true} )
+    .then((drones) => {
+      console.log("Here is the new drone you have updated.", drones);
+      res.redirect("/drones");
+    })
+    .catch((err) => {
+      console.log("An error has occured while updating a new drone.");
+    });
 });
 
 router.post("/drones/:id/delete", (req, res, next) => {
   // Iteration #5: Delete the drone
-  // ... your code here
+  const { id } = req.params;
+  Drone.findByIdAndDelete(id)
+  .then(() => {
+    res.redirect("/drones");
+  })
+  .catch((err) => {
+    console.log(err);
+    });
 });
 
 module.exports = router;
